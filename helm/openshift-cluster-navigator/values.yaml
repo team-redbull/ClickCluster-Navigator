@@ -17,8 +17,11 @@ fullnameOverride: ""
 # Application configuration
 app:
   title: "OpenShift Cluster Navigator"
-  vlanManagerUrl: "http://vlan-manager:9000"
+  segmentsManagerUrl: "http://segments-manager:8000"
   syncInterval: 300  # seconds
+  segmentTypes:
+    - HC
+    - MCE
 
 # Authentication configuration
 auth:
@@ -159,9 +162,10 @@ configMap:
   # data:
   #   config.json: |
   #     {
-  #       "vlan_manager": {
-  #         "url": "http://vlan-manager-service:9000",
-  #         "sync_interval_seconds": 300
+  #       "segments_manager": {
+  #         "url": "http://segments-manager-service:8000",
+  #         "sync_interval_seconds": 300,
+  #         "segment_types": ["HC", "MCE"]
   #       }
   #     }
 

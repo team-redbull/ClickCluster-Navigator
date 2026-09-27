@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path
 from contextlib import asynccontextmanager
 from src.api.routes import router as api_router
-from src.services import vlan_sync_service
+from src.services import segments_manager_sync_service
 from src.config import config
 from src.utils.logging_config import setup_logging
 from src.middleware import LoggingMiddleware
@@ -31,17 +31,17 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Application lifespan events."""
     logger.info("Application starting up...")
-    # Startup: Start VLAN sync service
-    await vlan_sync_service.start()
-    logger.info("VLAN sync service started")
+    # Startup: Start Segments Manager sync service
+    await segments_manager_sync_service.start()
+    logger.info("Segments Manager sync service started")
     # Perform initial sync
-    await vlan_sync_service.sync_data()
+    await segments_manager_sync_service.sync_data()
     logger.info("Initial data sync completed")
     yield
-    # Shutdown: Stop VLAN sync service
+    # Shutdown: Stop Segments Manager sync service
     logger.info("Application shutting down...")
-    vlan_sync_service.stop()
-    logger.info("VLAN sync service stopped")
+    segments_manager_sync_service.stop()
+    logger.info("Segments Manager sync service stopped")
 
 # Create FastAPI app
 app = FastAPI(

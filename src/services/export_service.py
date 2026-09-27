@@ -17,7 +17,7 @@ class ExportService:
         Returns:
             List of dictionaries ready for export (CSV/Excel)
         """
-        # Get combined sites data (includes both VLAN Manager and manual clusters)
+        # Get combined sites data (includes both Segments Manager and manual clusters)
         sites_data = cluster_service.get_combined_sites()
         
         # Flatten sites into a single list of clusters

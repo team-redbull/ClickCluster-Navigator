@@ -1,25 +1,25 @@
 """
-VLAN sync orchestrator service.
-Orchestrates the synchronization process between VLAN Manager API and local cache.
+Segments Manager sync orchestrator service.
+Orchestrates the synchronization process between Segments Manager API and local cache.
 """
 import asyncio
 from typing import Dict
 import logging
 from pathlib import Path
 from src.config import config
-from src.services.vlan.api_client import VLANApiClient
-from src.services.vlan.data_transformer import VLANDataTransformer
-from src.services.vlan.cache_service import VLANCacheService
+from src.services.segments_manager.api_client import SegmentsManagerApiClient
+from src.services.segments_manager.data_transformer import SegmentsManagerDataTransformer
+from src.services.segments_manager.cache_service import SegmentsManagerCacheService
 
 logger = logging.getLogger(__name__)
 
 
-class VLANSyncOrchestrator:
+class SegmentsManagerSyncOrchestrator:
     """
-    Orchestrates VLAN Manager synchronization.
+    Orchestrates Segments Manager synchronization.
 
     Coordinates API client, data transformer, and cache service
-    to sync VLAN Manager data with local storage.
+    to sync Segments Manager data with local storage.
     """
 
     def __init__(self, cache_file: Path):
@@ -30,19 +30,19 @@ class VLANSyncOrchestrator:
             cache_file: Path to cache file
         """
         self.cache_file = cache_file
-        self.api_client = VLANApiClient()
-        self.transformer = VLANDataTransformer()
-        self.cache_service = VLANCacheService(cache_file)
+        self.api_client = SegmentsManagerApiClient()
+        self.transformer = SegmentsManagerDataTransformer()
+        self.cache_service = SegmentsManagerCacheService(cache_file)
         self.is_running = False
 
     async def sync_data(self) -> Dict:
         """
-        Sync data from VLAN Manager API.
+        Sync data from Segments Manager API.
 
         Returns:
             Structured data with clusters and sites
         """
-        logger.info("Starting VLAN Manager data sync...")
+        logger.info("Starting Segments Manager data sync...")
 
         # Fetch data from API
         segments = await self.api_client.fetch_allocated_segments()
@@ -110,8 +110,8 @@ class VLANSyncOrchestrator:
         """Continuous sync loop that runs every configured interval."""
         self.is_running = True
         sync_interval = config.sync_interval
-        logger.info(f"VLAN sync service started (interval: {sync_interval}s, "
-                   f"URL: {config.vlan_manager_url})")
+        logger.info(f"Segments Manager sync service started (interval: {sync_interval}s, "
+                   f"URL: {config.segments_manager_url})")
 
         while self.is_running:
             try:
@@ -130,7 +130,7 @@ class VLANSyncOrchestrator:
     def stop(self):
         """Stop the background sync service."""
         self.is_running = False
-        logger.info("VLAN sync service stopped")
+        logger.info("Segments Manager sync service stopped")
 
     def load_from_cache(self) -> Dict:
         """

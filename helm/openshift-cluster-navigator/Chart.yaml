@@ -8,7 +8,7 @@ keywords:
   - openshift
   - cluster
   - navigator
-  - vlan-manager
+  - segments-manager
   - red-bull-racing
 home: https://github.com/yourusername/openshift-cluster-navigator
 maintainers:

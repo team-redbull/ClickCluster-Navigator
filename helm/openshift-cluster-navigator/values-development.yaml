@@ -11,8 +11,11 @@ image:
 # Application configuration
 app:
   title: "OpenShift Cluster Navigator - Development"
-  vlanManagerUrl: "http://vlan-manager.dev.svc:9000"
+  segmentsManagerUrl: "http://segments-manager.dev.svc:8000"
   syncInterval: 60  # More frequent sync for testing
+  segmentTypes:
+    - HC
+    - MCE
 
 # Authentication - Simple credentials for dev
 auth:

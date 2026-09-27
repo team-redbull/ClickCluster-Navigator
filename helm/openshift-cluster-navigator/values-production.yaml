@@ -11,8 +11,11 @@ image:
 # Application configuration
 app:
   title: "OpenShift Cluster Navigator - Production"
-  vlanManagerUrl: "http://vlan-manager.vlan-system.svc.cluster.local:9000"
+  segmentsManagerUrl: "http://segments-manager.segments-manager.svc.cluster.local:8000"
   syncInterval: 300
+  segmentTypes:
+    - HC
+    - MCE
 
 # Authentication - USE EXISTING SECRET IN PRODUCTION!
 auth:

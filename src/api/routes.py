@@ -13,15 +13,15 @@ from src.models import ClusterResponse, ClusterCreate, SiteResponse
 from src.services.cluster import cluster_service, IPResolverService, availability_service
 from src.services.export_service import export_service
 from src.services.statistics_service import statistics_service
-from src.services import vlan_sync_service
-from src.services.vlan_sync_status_service import vlan_sync_status_service
+from src.services import segments_manager_sync_service
+from src.services.segments_manager_sync_status_service import segments_manager_sync_status_service
 from src.database import cluster_store
 from src.utils import SiteUtils
 from src.auth import get_current_admin
 from src.exceptions import (
     ClusterNotFoundError,
     ClusterAlreadyExistsError,
-    VLANManagerClusterProtectedError
+    SegmentsManagerClusterProtectedError
 )
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ router = APIRouter(prefix="/api", tags=["api"])
 
 @router.get("/clusters", response_model=List[ClusterResponse], summary="Get all clusters")
 async def get_all_clusters() -> List[ClusterResponse]:
-    """Get all manual clusters. Note: Primary data source is VLAN Manager. Use /api/sites-combined for complete data."""
+    """Get all manual clusters. Note: Primary data source is Segments Manager. Use /api/sites-combined for complete data."""
     clusters = cluster_service.get_all_manual_clusters()
     return [ClusterResponse(**cluster) for cluster in clusters]
 
@@ -150,8 +150,8 @@ async def delete_cluster(cluster_id: str):
         if not cluster:
             raise ClusterNotFoundError(cluster_id)
 
-        if cluster.get("source") == "vlan-manager":
-            raise VLANManagerClusterProtectedError(cluster_id)
+        if cluster.get("source") == "segments-manager":
+            raise SegmentsManagerClusterProtectedError(cluster_id)
 
         success = cluster_service.delete_manual_cluster(cluster_id)
         if not success:
@@ -161,7 +161,7 @@ async def delete_cluster(cluster_id: str):
 
     except ClusterNotFoundError as e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=e.message)
-    except VLANManagerClusterProtectedError as e:
+    except SegmentsManagerClusterProtectedError as e:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=e.message)
 
 # ============================================================================
@@ -185,33 +185,33 @@ async def get_site(site_name: str) -> SiteResponse:
 # Combined Routes
 # ============================================================================
 
-@router.get("/sites-combined", response_model=List[SiteResponse], summary="Get all sites with combined data from VLAN Manager and manual entries")
+@router.get("/sites-combined", response_model=List[SiteResponse], summary="Get all sites with combined data from Segments Manager and manual entries")
 async def get_combined_sites() -> List[SiteResponse]:
-    """Get sites with clusters from both VLAN Manager (synced) and manual entries. VLAN Manager data takes precedence."""
+    """Get sites with clusters from both Segments Manager (synced) and manual entries. Segments Manager data takes precedence."""
     return cluster_service.get_combined_sites()
 
 # ============================================================================
-# VLAN Sync Routes
+# Segments Manager Sync Routes
 # ============================================================================
 
-@router.get("/vlan-sync/data", summary="Get synced VLAN Manager data")
+@router.get("/segments-sync/data", summary="Get synced Segments Manager data")
 async def get_synced_data() -> Dict:
-    """Get the latest synced data from VLAN Manager. Returns clusters, sites, and statistics. Falls back to cached data if API is unavailable."""
-    cached_data = vlan_sync_service.load_from_cache()
+    """Get the latest synced data from Segments Manager. Returns clusters, sites, and statistics. Falls back to cached data if API is unavailable."""
+    cached_data = segments_manager_sync_service.load_from_cache()
     if cached_data:
         return cached_data
     else:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail="VLAN Manager data not available and no cache exists"
+            detail="Segments Manager data not available and no cache exists"
         )
 
 
-@router.post("/vlan-sync/sync", summary="Trigger manual sync")
+@router.post("/segments-sync/sync", summary="Trigger manual sync")
 async def trigger_sync() -> Dict:
-    """Manually trigger a sync with VLAN Manager API. Useful for immediate updates without waiting for the scheduled sync."""
+    """Manually trigger a sync with Segments Manager API. Useful for immediate updates without waiting for the scheduled sync."""
     try:
-        data = await vlan_sync_service.sync_data()
+        data = await segments_manager_sync_service.sync_data()
         return {
             "status": "success",
             "message": "Sync completed successfully",
@@ -226,16 +226,16 @@ async def verify_auth(admin: str = Depends(get_current_admin)) -> Dict:
     return {"authenticated": True, "username": admin}
 
 
-@router.get("/vlan-sync/status", summary="Get sync service status")
+@router.get("/segments-sync/status", summary="Get sync service status")
 async def get_sync_status() -> Dict:
-    """Get the current status of the VLAN sync service."""
-    return vlan_sync_status_service.get_sync_status()
+    """Get the current status of the Segments Manager sync service."""
+    return segments_manager_sync_status_service.get_sync_status()
 
 
-@router.get("/vlan-sync/sites", summary="Get available sites from VLAN Manager")
-async def get_vlan_sync_sites() -> Dict:
-    """Get the list of available sites from VLAN Manager. Returns a list of unique site names."""
-    return vlan_sync_status_service.get_sites()
+@router.get("/segments-sync/sites", summary="Get available sites from Segments Manager")
+async def get_segments_sync_sites() -> Dict:
+    """Get the list of available sites from Segments Manager. Returns a list of unique site names."""
+    return segments_manager_sync_status_service.get_sites()
 
 # ============================================================================
 # Statistics Routes

@@ -102,7 +102,7 @@ helm install cluster-navigator ./openshift-cluster-navigator \
   --namespace cluster-navigator \
   --create-namespace \
   --set app.title="Custom Title" \
-  --set app.vlanManagerUrl="http://custom-vlan-manager:9000" \
+  --set app.segmentsManagerUrl="http://custom-segments-manager:8000" \
   --set image.repository="quay.io/your-org/cluster-navigator" \
   --set image.tag="v1.0.0"
 ```
@@ -128,7 +128,7 @@ Key configuration parameters:
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `app.title` | Application title | `"OpenShift Cluster Navigator"` |
-| `app.vlanManagerUrl` | VLAN Manager API URL | `"http://vlan-manager:9000"` |
+| `app.segmentsManagerUrl` | Segments Manager API URL | `"http://segments-manager:8000"` |
 | `app.syncInterval` | Sync interval (seconds) | `300` |
 | `auth.username` | Admin username | `"admin"` |
 | `auth.password` | Admin password | `"Password1"` |

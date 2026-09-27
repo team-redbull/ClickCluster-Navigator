@@ -188,7 +188,7 @@ helm install cluster-navigator ./helm/openshift-cluster-navigator \
 - `8000` - HTTP port for the application
 
 ### Volumes
-- `/app/data` - Cache directory for VLAN Manager sync data
+- `/app/data` - Cache directory for Segments Manager sync data
 
 ### User
 - Runs as non-root user `appuser` (UID 1000)
@@ -282,7 +282,7 @@ podman run -d \
 For issues with the image:
 1. Check logs: `podman logs container-name`
 2. Verify environment variables are set correctly
-3. Ensure VLAN Manager is accessible
+3. Ensure Segments Manager is accessible
 4. Review the application logs inside the container
 
 For more information, see:

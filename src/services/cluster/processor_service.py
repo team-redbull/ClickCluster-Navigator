@@ -1,6 +1,6 @@
 """
 Cluster processing and transformation logic.
-Handles processing of VLAN Manager clusters and manual clusters.
+Handles processing of Segments Manager clusters and manual clusters.
 """
 from typing import List, Dict
 from datetime import datetime
@@ -14,29 +14,30 @@ logger = logging.getLogger(__name__)
 class ClusterProcessorService:
     """Service for processing and transforming cluster data."""
 
-    def process_vlan_clusters(self, vlan_clusters: List[Dict]) -> List[Dict]:
+    def process_segments_manager_clusters(self, segments_manager_clusters: List[Dict]) -> List[Dict]:
         """
-        Transform VLAN Manager clusters to API response format.
+        Transform Segments Manager clusters to API response format.
 
         Args:
-            vlan_clusters: Raw clusters from VLAN Manager cache
+            segments_manager_clusters: Raw clusters from Segments Manager cache
 
         Returns:
             List of processed cluster dictionaries
         """
         processed = []
 
-        for cluster in vlan_clusters:
+        for cluster in segments_manager_clusters:
             domain_name = cluster.get("domainName", config.default_domain)
 
-            # Resolve LoadBalancer IP (always returns list or None)
-            load_balancer_ip = ClusterUtils.resolve_loadbalancer_ip(
-                cluster['clusterName'],
-                domain_name
-            )
+            # LoadBalancer IP was already resolved during the periodic sync
+            # (src/services/segments_manager/sync_orchestrator.py) and is
+            # stored on the cached cluster. Re-resolving it here would mean
+            # every request to /api/sites-combined pays a synchronous DNS
+            # lookup per cluster, blocking the event loop on every reload.
+            load_balancer_ip = cluster.get("loadBalancerIP")
 
             cluster_entry = {
-                "id": f"vlan-{cluster['clusterName']}@{cluster['site']}",
+                "id": f"segments-{cluster['clusterName']}@{cluster['site']}",
                 "clusterName": cluster["clusterName"],
                 "site": cluster["site"],
                 "segments": cluster["segments"],
@@ -46,7 +47,7 @@ class ClusterProcessorService:
                     domain_name
                 ),
                 "createdAt": datetime.utcnow().isoformat(),
-                "source": "vlan-manager",
+                "source": "segments-manager",
                 "loadBalancerIP": load_balancer_ip,  # Already a list or None
                 "metadata": cluster.get("metadata", {})
             }
@@ -58,27 +59,27 @@ class ClusterProcessorService:
     def process_manual_clusters(
         self,
         manual_clusters: List[Dict],
-        vlan_cluster_keys: set
+        segments_manager_cluster_keys: set
     ) -> List[Dict]:
         """
-        Process manual clusters, filtering out duplicates from VLAN Manager.
+        Process manual clusters, filtering out duplicates from Segments Manager.
 
         Args:
             manual_clusters: Manual clusters from cluster store
-            vlan_cluster_keys: Set of (clusterName, site) tuples from VLAN Manager
+            segments_manager_cluster_keys: Set of (clusterName, site) tuples from Segments Manager
 
         Returns:
-            List of manual clusters not in VLAN Manager
+            List of manual clusters not in Segments Manager
         """
         processed = []
 
         for cluster in manual_clusters:
-            # Skip if this cluster already exists from VLAN Manager
+            # Skip if this cluster already exists from Segments Manager
             cluster_key = (cluster["clusterName"], cluster["site"])
-            if cluster_key in vlan_cluster_keys:
+            if cluster_key in segments_manager_cluster_keys:
                 logger.debug(
                     f"Skipping manual cluster {cluster['clusterName']}@{cluster['site']} "
-                    f"(exists in VLAN Manager)"
+                    f"(exists in Segments Manager)"
                 )
                 continue
 
@@ -104,4 +105,3 @@ class ClusterProcessorService:
             processed.append(cluster)
 
         return processed
-

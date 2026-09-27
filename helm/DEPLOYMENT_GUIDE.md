@@ -32,7 +32,7 @@ podman --version
 
 - OpenShift 4.x cluster with admin access
 - Available storage class for PersistentVolumeClaims
-- VLAN Manager API accessible from the cluster
+- Segments Manager API accessible from the cluster
 - Minimum cluster resources:
   - 2 CPU cores available
   - 2GB RAM available
@@ -88,14 +88,14 @@ oc create secret generic cluster-navigator-credentials \
   --namespace cluster-navigator
 ```
 
-### 4. Configure VLAN Manager Access
+### 4. Configure Segments Manager Access
 
-Ensure VLAN Manager is accessible from the cluster:
+Ensure Segments Manager is accessible from the cluster:
 
 ```bash
 # Test connectivity from a pod
 oc run test-curl --image=curlimages/curl:latest --rm -it --restart=Never -- \
-  curl -v http://vlan-manager.vlan-system.svc:9000/api/segments
+  curl -v http://segments-manager.segments-manager.svc:8000/api/segments
 ```
 
 ## Building the Container Image
@@ -176,7 +176,7 @@ cd helm
 cat > production-custom.yaml <<EOF
 app:
   title: "Production Cluster Navigator"
-  vlanManagerUrl: "http://vlan-manager.production.svc:9000"
+  segmentsManagerUrl: "http://segments-manager.production.svc:8000"
 
 auth:
   existingSecret: "cluster-navigator-credentials"
@@ -216,7 +216,7 @@ helm install cluster-navigator ./openshift-cluster-navigator \
 helm install cluster-navigator ./openshift-cluster-navigator \
   --namespace cluster-navigator \
   --set app.title="Red Bull Racing Clusters" \
-  --set app.vlanManagerUrl="http://vlan-manager:9000" \
+  --set app.segmentsManagerUrl="http://segments-manager:8000" \
   --set auth.existingSecret="cluster-navigator-credentials" \
   --set image.repository="quay.io/rbr/cluster-navigator" \
   --set image.tag="v1.0.0" \
@@ -247,7 +247,7 @@ spec:
       values: |
         app:
           title: "Production Cluster Navigator"
-          vlanManagerUrl: "http://vlan-manager.vlan-system.svc:9000"
+          segmentsManagerUrl: "http://segments-manager.segments-manager.svc:8000"
         auth:
           existingSecret: "cluster-navigator-credentials"
         image:
@@ -322,7 +322,7 @@ echo "Application URL: https://$(oc get route cluster-navigator -n cluster-navig
 xdg-open "https://$(oc get route cluster-navigator -n cluster-navigator -o jsonpath='{.spec.host}')"
 ```
 
-### 5. Test VLAN Manager Sync
+### 5. Test Segments Manager Sync
 
 ```bash
 # Trigger manual sync
@@ -332,11 +332,11 @@ ROUTE_URL=$(oc get route cluster-navigator -n cluster-navigator -o jsonpath='{.s
 ADMIN_PASSWORD=$(oc get secret cluster-navigator-credentials -n cluster-navigator -o jsonpath='{.data.password}' | base64 -d)
 
 # Trigger sync (requires admin credentials)
-curl -k -X POST https://$ROUTE_URL/api/vlan-sync/sync \
+curl -k -X POST https://$ROUTE_URL/api/segments-sync/sync \
   -u admin:$ADMIN_PASSWORD
 
 # Check cache
-oc exec deployment/cluster-navigator -n cluster-navigator -- cat /app/data/vlan_cache.json
+oc exec deployment/cluster-navigator -n cluster-navigator -- cat /app/data/segments_manager_cache.json
 ```
 
 ## Configuration
@@ -344,11 +344,11 @@ oc exec deployment/cluster-navigator -n cluster-navigator -- cat /app/data/vlan_
 ### Update Configuration After Deployment
 
 ```bash
-# Update VLAN Manager URL
+# Update Segments Manager URL
 helm upgrade cluster-navigator ./openshift-cluster-navigator \
   --namespace cluster-navigator \
   --reuse-values \
-  --set app.vlanManagerUrl="http://new-vlan-manager:9000"
+  --set app.segmentsManagerUrl="http://new-segments-manager:8000"
 
 # Update sync interval
 helm upgrade cluster-navigator ./openshift-cluster-navigator \
@@ -404,12 +404,12 @@ oc describe deployment cluster-navigator -n cluster-navigator
 # - PVC issues: Check storage class availability
 ```
 
-### VLAN Manager Connection Issues
+### Segments Manager Connection Issues
 
 ```bash
 # Test from pod
 oc exec deployment/cluster-navigator -n cluster-navigator -- \
-  curl -v http://vlan-manager:9000/api/segments
+  curl -v http://segments-manager:8000/api/segments
 
 # Check network policy
 oc get networkpolicy -n cluster-navigator
@@ -581,7 +581,7 @@ Before deploying to production, ensure:
 
 - [ ] Container image built and pushed to registry
 - [ ] Secure password generated and stored safely
-- [ ] VLAN Manager connectivity tested
+- [ ] Segments Manager connectivity tested
 - [ ] Resource limits appropriate for workload
 - [ ] Persistent storage configured
 - [ ] TLS/SSL enabled on route

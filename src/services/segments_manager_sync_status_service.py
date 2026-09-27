@@ -1,51 +1,51 @@
 """
-VLAN sync status service for formatting sync status information.
+Segments Manager sync status service for formatting sync status information.
 """
 import os
 from datetime import datetime
 from typing import Dict
-from src.services import vlan_sync_service
+from src.services import segments_manager_sync_service
 from src.config import config
 
 
-class VLANSyncStatusService:
-    """Service for VLAN sync status information."""
+class SegmentsManagerSyncStatusService:
+    """Service for Segments Manager sync status information."""
 
     @staticmethod
     def get_sync_status() -> Dict:
         """
-        Get the current status of the VLAN sync service.
-        
+        Get the current status of the Segments Manager sync service.
+
         Returns:
             Dictionary with sync status information
         """
-        cache_exists = vlan_sync_service.cache_file.exists()
+        cache_exists = segments_manager_sync_service.cache_file.exists()
         cache_age = None
         last_updated = None
 
         if cache_exists:
-            cache_mtime = os.path.getmtime(vlan_sync_service.cache_file)
+            cache_mtime = os.path.getmtime(segments_manager_sync_service.cache_file)
             cache_age = (datetime.now().timestamp() - cache_mtime) / 60  # in minutes
             last_updated = datetime.fromtimestamp(cache_mtime).isoformat()
 
         return {
-            "service_running": vlan_sync_service.is_running,
+            "service_running": segments_manager_sync_service.is_running,
             "sync_interval_seconds": config.sync_interval,
             "cache_exists": cache_exists,
             "cache_age_minutes": round(cache_age, 2) if cache_age else None,
             "last_updated": last_updated,
-            "vlan_manager_url": config.vlan_manager_url
+            "segments_manager_url": config.segments_manager_url
         }
 
     @staticmethod
     def get_sites() -> Dict:
         """
-        Get the list of available sites from VLAN Manager.
-        
+        Get the list of available sites from Segments Manager.
+
         Returns:
             Dictionary with sites list and count
         """
-        cached_data = vlan_sync_service.load_from_cache()
+        cached_data = segments_manager_sync_service.load_from_cache()
 
         if cached_data:
             # Extract unique site names from the sites list
@@ -63,5 +63,4 @@ class VLANSyncStatusService:
 
 
 # Global service instance
-vlan_sync_status_service = VLANSyncStatusService()
-
+segments_manager_sync_status_service = SegmentsManagerSyncStatusService()

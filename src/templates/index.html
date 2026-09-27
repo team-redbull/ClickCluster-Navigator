@@ -23,7 +23,7 @@
                         <div class="sync-info">
                             <div class="sync-indicator" id="syncIndicator" style="display: none;">
                                 <span class="sync-dot"></span>
-                                Syncing with VLAN Manager...
+                                Syncing with Segments Manager...
                             </div>
                             <div class="last-sync-time" id="lastSyncTimeDisplay">
                                 <span class="sync-label">Last sync:</span>
@@ -93,7 +93,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
                         </svg>
-                        Hard Refresh from VLAN Manager
+                        Hard Refresh from Segments Manager
                     </button>
                     <button class="btn-secondary" onclick="toggleCreateClusterForm()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -131,7 +131,7 @@
                             <select id="newClusterSite" name="site" required>
                                 <option value="">Select a site...</option>
                             </select>
-                            <small>Sites from VLAN Manager</small>
+                            <small>Sites from Segments Manager</small>
                         </div>
                         <div class="form-group">
                             <label for="newClusterSegments">Network Segments (CIDR) *</label>
@@ -162,7 +162,7 @@
                     <div id="createClusterMessage" class="message"></div>
                 </div>
                 <div class="admin-info">
-                    <p><strong>Data Source:</strong> VLAN Manager API (Auto-sync every 5 minutes)</p>
+                    <p><strong>Data Source:</strong> Segments Manager API (Auto-sync every 5 minutes)</p>
                     <p><strong>Last Sync:</strong> <span id="lastSyncTime">Loading...</span></p>
                     <p id="syncStats"></p>
                 </div>
@@ -320,7 +320,7 @@
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
-                    <p>No clusters found. Clusters are automatically synced from VLAN Manager.</p>
+                    <p>No clusters found. Clusters are automatically synced from Segments Manager.</p>
                 </div>
             </section>
         </main>
@@ -329,7 +329,7 @@
             <p>
                 <strong>Redbull x ClickCluster</strong> - Cluster Navigator v1.0.0
                 <br>
-                Data synced from VLAN Manager
+                Data synced from Segments Manager
                 <br>
                 <small>Keyboard shortcuts: Ctrl+K (Search), Ctrl+D (Dark Mode), Ctrl+R (Refresh)</small>
             </p>

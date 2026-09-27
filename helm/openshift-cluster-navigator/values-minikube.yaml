@@ -14,8 +14,11 @@ imagePullSecrets: []
 # Application configuration
 app:
   title: "OpenShift Cluster Navigator (Minikube)"
-  vlanManagerUrl: "http://vlan-manager:9000"  # Adjust if VLAN Manager is deployed
+  segmentsManagerUrl: "http://segments-manager:8000"  # Adjust if Segments Manager is deployed
   syncInterval: 300
+  segmentTypes:
+    - HC
+    - MCE
 
 # Authentication configuration
 auth:

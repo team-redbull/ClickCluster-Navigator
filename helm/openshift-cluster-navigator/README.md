@@ -4,11 +4,11 @@ A Helm chart for deploying the OpenShift Cluster Navigator application on OpenSh
 
 ## Overview
 
-OpenShift Cluster Navigator is a web application that helps you navigate and manage your OpenShift clusters organized by site. It integrates with VLAN Manager to automatically sync cluster and network segment information.
+OpenShift Cluster Navigator is a web application that helps you navigate and manage your OpenShift clusters organized by site. It integrates with Segments Manager to automatically sync cluster and network segment information.
 
 ## Features
 
-- 🔄 Automatic sync with VLAN Manager API
+- 🔄 Automatic sync with Segments Manager API
 - 📊 Cluster organization by site
 - 🎨 Red Bull Racing × OpenShift branding
 - 🔒 Secure authentication
@@ -56,7 +56,7 @@ helm install cluster-navigator ./openshift-cluster-navigator \
   --namespace cluster-navigator \
   --create-namespace \
   --set app.title="Red Bull Racing Clusters" \
-  --set app.vlanManagerUrl="http://vlan-manager.vlan-system.svc:9000" \
+  --set app.segmentsManagerUrl="http://segments-manager.segments-manager.svc:8000" \
   --set auth.password="YourSecurePassword123" \
   --set route.host="clusters.apps.ocp.example.com"
 ```
@@ -68,7 +68,7 @@ helm install cluster-navigator ./openshift-cluster-navigator \
 cat > my-values.yaml <<EOF
 app:
   title: "Production Cluster Navigator"
-  vlanManagerUrl: "http://vlan-manager.production.svc:9000"
+  segmentsManagerUrl: "http://segments-manager.production.svc:8000"
 
 auth:
   existingSecret: "cluster-navigator-credentials"
@@ -106,7 +106,7 @@ The following table lists the configurable parameters of the chart and their def
 | Parameter | Description | Default |
 |-----------|-------------|---------|
 | `app.title` | Application title displayed in UI | `"OpenShift Cluster Navigator"` |
-| `app.vlanManagerUrl` | VLAN Manager API URL | `"http://vlan-manager:9000"` |
+| `app.segmentsManagerUrl` | Segments Manager API URL | `"http://segments-manager:8000"` |
 | `app.syncInterval` | Sync interval in seconds | `300` |
 
 ### Authentication
@@ -185,7 +185,7 @@ replicaCount: 3
 
 app:
   title: "Production Cluster Navigator"
-  vlanManagerUrl: "http://vlan-manager.production.svc.cluster.local:9000"
+  segmentsManagerUrl: "http://segments-manager.production.svc.cluster.local:8000"
   syncInterval: 180
 
 auth:
@@ -252,7 +252,7 @@ replicaCount: 1
 
 app:
   title: "Dev Cluster Navigator"
-  vlanManagerUrl: "http://vlan-manager.dev.svc:9000"
+  segmentsManagerUrl: "http://segments-manager.dev.svc:8000"
 
 auth:
   username: "admin"
@@ -276,18 +276,18 @@ autoscaling:
   enabled: false
 ```
 
-### Using External VLAN Manager
+### Using External Segments Manager
 
 ```yaml
-# external-vlan-manager.yaml
+# external-segments-manager.yaml
 app:
-  vlanManagerUrl: "https://vlan-manager.external.example.com"
+  segmentsManagerUrl: "https://segments-manager.external.example.com"
   syncInterval: 600  # 10 minutes
 
 networkPolicy:
   enabled: true
   egress:
-    # Allow VLAN Manager
+    # Allow Segments Manager
     - to:
       - namespaceSelector: {}
       ports:
@@ -384,17 +384,17 @@ curl -k https://$(oc get route cluster-navigator -o jsonpath='{.spec.host}')/hea
 
 ### Sync Issues
 
-Check VLAN Manager connectivity:
+Check Segments Manager connectivity:
 ```bash
 kubectl exec -it deployment/cluster-navigator -n cluster-navigator -- \
-  curl http://vlan-manager:9000/api/segments
+  curl http://segments-manager:8000/api/segments
 ```
 
 ### View Cache
 
 ```bash
 kubectl exec -it deployment/cluster-navigator -n cluster-navigator -- \
-  cat /app/data/vlan_cache.json
+  cat /app/data/segments_manager_cache.json
 ```
 
 ### Reset Cache

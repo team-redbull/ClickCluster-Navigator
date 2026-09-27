@@ -144,7 +144,7 @@ class ClusterResponse(BaseModel):
     domainName: str = Field(..., description="Domain name")
     consoleUrl: str = Field(..., description="OpenShift console URL")
     createdAt: datetime = Field(..., description="Creation timestamp")
-    source: Optional[str] = Field(default="manual", description="Cluster source: 'vlan-manager' or 'manual'")
+    source: Optional[str] = Field(default="manual", description="Cluster source: 'segments-manager' or 'manual'")
     loadBalancerIP: Optional[List[str]] = Field(default=None, description="LoadBalancer IP addresses (resolved from DNS, supports multiple IPs for round-robin)")
 
     model_config = ConfigDict(
@@ -158,7 +158,7 @@ class ClusterResponse(BaseModel):
                 "domainName": "example.com",
                 "consoleUrl": "https://console-openshift-console.apps.ocp4-roi.example.com",
                 "createdAt": "2025-11-13T12:00:00Z",
-                "source": "vlan-manager",
+                "source": "segments-manager",
                 "loadBalancerIP": ["192.168.100.10"]
             }
         }

@@ -4,7 +4,7 @@ This document tracks the AI assistant's contributions and provides context for f
 
 ## Project Overview
 
-**OpenShift Cluster Navigator** - A modern web application for managing and navigating OpenShift clusters with VLAN Manager integration, automatic DNS resolution, and comprehensive cluster management features.
+**OpenShift Cluster Navigator** - A modern web application for managing and navigating OpenShift clusters with Segments Manager integration, automatic DNS resolution, and comprehensive cluster management features.
 
 **Created by:** Roi Blum
 **Tech Stack:** FastAPI (Python), Vanilla JavaScript, Chart.js
@@ -179,13 +179,14 @@ helm install cluster-navigator ./helm/openshift-cluster-navigator \
 
 ### Environment Variables
 - `LOG_LEVEL` - Controls logging verbosity (DEBUG, INFO, WARNING, ERROR)
-- `VLAN_MANAGER_URL` - VLAN Manager API endpoint
+- `SEGMENTS_MANAGER_URL` - Segments Manager API endpoint
+- `SEGMENT_TYPES` - Comma-separated segment types to sync (default: HC,MCE)
 - `DNS_SERVER` - DNS server for IP resolution (default: 8.8.8.8)
 - `DNS_RESOLUTION_PATH` - Hostname template (default: `ingress.{cluster_name}.{domain_name}`)
 - `ADMIN_USERNAME` / `ADMIN_PASSWORD` - Admin authentication
 
 ### Config File (config.json)
-- VLAN Manager URL and sync interval
+- Segments Manager URL, sync interval, and segment type filter
 - DNS server and timeout settings
 - Application settings (host, port, domain)
 - Admin credentials

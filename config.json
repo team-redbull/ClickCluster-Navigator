@@ -1,8 +1,9 @@
 {
-  "vlan_manager": {
-    "url": "http://host.containers.internal:9000",
+  "segments_manager": {
+    "url": "https://segments-manager-segments-manager.apps.cluster-2qsc5.2qsc5.sandbox5410.opentlc.com",
     "sync_interval_seconds": 300,
-    "insecure_tls_verify": false
+    "insecure_tls_verify": false,
+    "segment_types": ["HC", "MCE"]
   },
   "application": {
     "host": "0.0.0.0",

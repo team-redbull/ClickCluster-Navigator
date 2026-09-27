@@ -52,7 +52,7 @@ class StatisticsService:
         
         # Source distribution
         source_distribution = {
-            "vlan-manager": sum(1 for c in all_clusters if c.get("source") == "vlan-manager"),
+            "segments-manager": sum(1 for c in all_clusters if c.get("source") == "segments-manager"),
             "manual": sum(1 for c in all_clusters if c.get("source") == "manual" or "source" not in c)
         }
         

@@ -8,9 +8,11 @@ from typing import Dict, Any
 
 # Default configuration
 DEFAULT_CONFIG = {
-    "vlan_manager": {
+    "segments_manager": {
         "url": "http://0.0.0.0:9000",
-        "sync_interval_seconds": 300
+        "sync_interval_seconds": 300,
+        "insecure_tls_verify": False,
+        "segment_types": ["HC", "MCE"]
     },
     "application": {
         "host": "0.0.0.0",
@@ -54,14 +56,14 @@ class Config:
             return DEFAULT_CONFIG
 
     @property
-    def vlan_manager_url(self) -> str:
-        """Get VLAN Manager API URL."""
-        return self._config["vlan_manager"]["url"]
+    def segments_manager_url(self) -> str:
+        """Get Segments Manager API URL from environment or config."""
+        return os.getenv("SEGMENTS_MANAGER_URL", self._config["segments_manager"]["url"])
 
     @property
     def sync_interval(self) -> int:
         """Get sync interval in seconds."""
-        return self._config["vlan_manager"]["sync_interval_seconds"]
+        return self._config["segments_manager"]["sync_interval_seconds"]
 
     @property
     def app_host(self) -> str:
@@ -113,9 +115,17 @@ class Config:
         return os.getenv("DNS_RESOLUTION_PATH", self._config.get("dns", {}).get("resolution_path", "ingress.{cluster_name}.{domain_name}"))
 
     @property
-    def vlan_manager_insecure_tls_verify(self) -> bool:
-        """Get VLAN Manager insecure TLS verification setting (verify=False when True)."""
-        return self._config.get("vlan_manager", {}).get("insecure_tls_verify", False)
+    def segments_manager_insecure_tls_verify(self) -> bool:
+        """Get Segments Manager insecure TLS verification setting (verify=False when True)."""
+        return self._config.get("segments_manager", {}).get("insecure_tls_verify", False)
+
+    @property
+    def segment_types(self) -> list:
+        """Get the list of segment types to sync from Segments Manager (e.g. HC, MCE)."""
+        env_value = os.getenv("SEGMENT_TYPES")
+        if env_value:
+            return [t.strip() for t in env_value.split(",") if t.strip()]
+        return self._config.get("segments_manager", {}).get("segment_types", ["HC", "MCE"])
 
 
 # Global config instance

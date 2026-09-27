@@ -25,8 +25,8 @@
    To view the password:
    kubectl get secret {{ include "openshift-cluster-navigator.secretName" . }} -o jsonpath='{.data.password}' | base64 -d
 
-3. VLAN Manager Configuration:
-   The application is configured to sync with VLAN Manager at: {{ .Values.app.vlanManagerUrl }}
+3. Segments Manager Configuration:
+   The application is configured to sync with Segments Manager at: {{ .Values.app.segmentsManagerUrl }}
    Sync interval: {{ .Values.app.syncInterval }} seconds
 
 4. Health Check:

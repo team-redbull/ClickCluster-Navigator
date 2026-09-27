@@ -59,7 +59,7 @@ curl -k https://$(oc get route cluster-navigator -n cluster-navigator -o jsonpat
 ROUTE_HOST=$(oc get route cluster-navigator -n cluster-navigator -o jsonpath='{.spec.host}')
 ADMIN_PASS=$(oc get secret cluster-navigator-credentials -n cluster-navigator -o jsonpath='{.data.password}' | base64 -d)
 
-curl -k -X POST https://$ROUTE_HOST/api/vlan-sync/sync -u admin:$ADMIN_PASS
+curl -k -X POST https://$ROUTE_HOST/api/segments-sync/sync -u admin:$ADMIN_PASS
 ```
 
 ### Scale Replicas
@@ -69,16 +69,16 @@ oc scale deployment cluster-navigator --replicas=5 -n cluster-navigator
 
 ### View Cache
 ```bash
-oc exec deployment/cluster-navigator -n cluster-navigator -- cat /app/data/vlan_cache.json | jq .
+oc exec deployment/cluster-navigator -n cluster-navigator -- cat /app/data/segments_manager_cache.json | jq .
 ```
 
 ## Configuration Updates
 
-### Update VLAN Manager URL
+### Update Segments Manager URL
 ```bash
 helm upgrade cluster-navigator ./openshift-cluster-navigator \
   -n cluster-navigator --reuse-values \
-  --set app.vlanManagerUrl="http://new-vlan-manager:9000"
+  --set app.segmentsManagerUrl="http://new-segments-manager:8000"
 ```
 
 ### Update Title
@@ -122,10 +122,10 @@ oc get events -n cluster-navigator --sort-by='.lastTimestamp'
 oc debug deployment/cluster-navigator -n cluster-navigator
 ```
 
-### Test VLAN Manager Connection
+### Test Segments Manager Connection
 ```bash
 oc exec deployment/cluster-navigator -n cluster-navigator -- \
-  curl -v http://vlan-manager:9000/api/segments
+  curl -v http://segments-manager:8000/api/segments
 ```
 
 ### View Secrets
@@ -217,7 +217,7 @@ helm template test ./openshift-cluster-navigator > test-manifests.yaml
 | File | Purpose |
 |------|---------|
 | `/app/config.json` | Application configuration |
-| `/app/data/vlan_cache.json` | VLAN Manager cache |
+| `/app/data/segments_manager_cache.json` | Segments Manager cache |
 | `/app/src/static/images/logo.png` | Application logo |
 
 ## URLs
@@ -225,7 +225,7 @@ helm template test ./openshift-cluster-navigator > test-manifests.yaml
 - **Application**: `https://$(oc get route cluster-navigator -o jsonpath='{.spec.host}')`
 - **Health Check**: `https://.../health`
 - **API Docs**: `https://.../api/docs`
-- **Sync Endpoint**: `POST https://.../api/vlan-sync/sync`
+- **Sync Endpoint**: `POST https://.../api/segments-sync/sync`
 - **Sites (Combined)**: `https://.../api/sites-combined`
 
 ## Support

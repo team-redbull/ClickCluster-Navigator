@@ -77,7 +77,7 @@ See [requirements.txt](../requirements.txt) for complete list.
 
 ## Volumes
 
-- `/app/data`: Cache directory for VLAN Manager sync data (persistent storage recommended)
+- `/app/data`: Cache directory for Segments Manager sync data (persistent storage recommended)
 
 ## Health Check
 
@@ -190,14 +190,14 @@ Before deploying to production:
 
 - [ ] Change default admin password
 - [ ] Push image to secure registry
-- [ ] Configure VLAN Manager URL
+- [ ] Configure Segments Manager URL
 - [ ] Set up persistent storage for cache
 - [ ] Configure TLS/SSL termination
 - [ ] Enable monitoring/alerting
 - [ ] Set appropriate resource limits
 - [ ] Configure backup for cache data
 - [ ] Test health check endpoint
-- [ ] Verify VLAN Manager connectivity
+- [ ] Verify Segments Manager connectivity
 - [ ] Review security context constraints
 - [ ] Document custom configurations
 
@@ -217,7 +217,7 @@ Before deploying to production:
 - Check logs: `podman logs <container-name>`
 - Verify environment variables are set correctly
 - Ensure port 8000 is not already in use
-- Check VLAN Manager accessibility
+- Check Segments Manager accessibility
 
 ### Permission Denied Errors
 
@@ -241,7 +241,7 @@ Before deploying to production:
 
 ### v1.0.0 (2025-11-16)
 - Initial release
-- FastAPI backend with VLAN Manager integration
+- FastAPI backend with Segments Manager integration
 - Responsive UI with dark mode
 - Red Bull x OpenShift branding
 - Automatic sync with 5-minute intervals

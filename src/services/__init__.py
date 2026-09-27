@@ -1,4 +1,4 @@
 """Services package for background tasks."""
-from .vlan_sync import vlan_sync_service
+from .segments_manager_sync import segments_manager_sync_service
 
-__all__ = ["vlan_sync_service"]
+__all__ = ["segments_manager_sync_service"]

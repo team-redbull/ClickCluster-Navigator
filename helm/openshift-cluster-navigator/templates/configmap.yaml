@@ -7,9 +7,10 @@ metadata:
 data:
   config.json: |
     {
-      "vlan_manager": {
-        "url": "{{ .Values.app.vlanManagerUrl }}",
-        "sync_interval_seconds": {{ .Values.app.syncInterval }}
+      "segments_manager": {
+        "url": "{{ .Values.app.segmentsManagerUrl }}",
+        "sync_interval_seconds": {{ .Values.app.syncInterval }},
+        "segment_types": {{ .Values.app.segmentTypes | toJson }}
       },
       "application": {
         "host": "0.0.0.0",

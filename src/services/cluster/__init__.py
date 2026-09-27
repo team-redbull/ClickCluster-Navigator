@@ -43,7 +43,7 @@ class ClusterService:
 
     # Merging operations - delegate to merge service
     def get_combined_sites(self):
-        """Get all sites with clusters from both VLAN Manager and manual entries."""
+        """Get all sites with clusters from both Segments Manager and manual entries."""
         return self.merge.get_combined_sites()
 
 

@@ -60,12 +60,12 @@ class ClusterDeletionError(ClusterException):
         super().__init__(message, reason)
 
 
-class VLANManagerClusterProtectedError(ClusterException):
-    """Raised when attempting to modify/delete a VLAN Manager cluster."""
+class SegmentsManagerClusterProtectedError(ClusterException):
+    """Raised when attempting to modify/delete a Segments Manager cluster."""
 
     def __init__(self, cluster_id: str):
         self.cluster_id = cluster_id
-        message = "Cannot delete VLAN Manager clusters. Only manual clusters can be deleted."
+        message = "Cannot delete Segments Manager clusters. Only manual clusters can be deleted."
         super().__init__(message)
 
 
@@ -144,21 +144,21 @@ class ExternalAPIError(ClusterNavigatorException):
     pass
 
 
-class VLANManagerAPIError(ExternalAPIError):
-    """Raised when VLAN Manager API request fails."""
+class SegmentsManagerAPIError(ExternalAPIError):
+    """Raised when Segments Manager API request fails."""
 
     def __init__(self, endpoint: str, status_code: Optional[int] = None, details: Optional[str] = None):
         self.endpoint = endpoint
         self.status_code = status_code
-        message = f"VLAN Manager API error for endpoint '{endpoint}'"
+        message = f"Segments Manager API error for endpoint '{endpoint}'"
         if status_code:
             message += f" (HTTP {status_code})"
         super().__init__(message, details)
 
 
-class VLANManagerUnavailableError(ExternalAPIError):
-    """Raised when VLAN Manager is unavailable."""
+class SegmentsManagerUnavailableError(ExternalAPIError):
+    """Raised when Segments Manager is unavailable."""
 
     def __init__(self, reason: Optional[str] = None):
-        message = "VLAN Manager is currently unavailable"
+        message = "Segments Manager is currently unavailable"
         super().__init__(message, reason)

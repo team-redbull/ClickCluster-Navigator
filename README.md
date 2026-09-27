@@ -1,10 +1,10 @@
 # OpenShift Cluster Navigator
 
-A modern web application for managing and navigating OpenShift clusters with VLAN Manager integration, automatic DNS resolution, and comprehensive cluster management features.
+A modern web application for managing and navigating OpenShift clusters with Segments Manager integration, automatic DNS resolution, and comprehensive cluster management features.
 
 ## 🎯 Key Features
 
-- **VLAN Manager Integration**: Automatic synchronization with VLAN Manager API
+- **Segments Manager Integration**: Automatic synchronization with Segments Manager API (HC/MCE segment types)
 - **DNS Resolution API**: Query and validate DNS records for clusters
 - **Manual Cluster Management**: Add, edit, and delete clusters manually
 - **LoadBalancer IP Resolution**: Automatic DNS-based IP resolution with configurable path
@@ -52,9 +52,11 @@ helm install cluster-navigator ./openshift-cluster-navigator -f values-productio
 ### Config File (`config.json`)
 ```json
 {
-  "vlan_manager": {
-    "url": "http://vlan-manager:9000",
-    "sync_interval_seconds": 300
+  "segments_manager": {
+    "url": "http://segments-manager:8000",
+    "sync_interval_seconds": 300,
+    "insecure_tls_verify": false,
+    "segment_types": ["HC", "MCE"]
   },
   "application": {
     "host": "0.0.0.0",
@@ -76,7 +78,8 @@ helm install cluster-navigator ./openshift-cluster-navigator -f values-productio
 ### Environment Variables
 
 - `LOG_LEVEL` - Logging level (DEBUG, INFO, WARNING, ERROR) - default: INFO
-- `VLAN_MANAGER_URL` - VLAN Manager API URL
+- `SEGMENTS_MANAGER_URL` - Segments Manager API URL
+- `SEGMENT_TYPES` - Comma-separated segment types to sync (default: HC,MCE)
 - `DEFAULT_DOMAIN` - Default domain for clusters
 - `DNS_SERVER` - DNS server for IP resolution
 - `DNS_TIMEOUT` - DNS query timeout in seconds
@@ -89,7 +92,7 @@ helm install cluster-navigator ./openshift-cluster-navigator -f values-productio
 
 ```bash
 export LOG_LEVEL=DEBUG
-export VLAN_MANAGER_URL=http://vlan-manager:9000
+export SEGMENTS_MANAGER_URL=http://segments-manager:8000
 export DNS_SERVER=8.8.8.8
 ```
 
@@ -98,7 +101,7 @@ export DNS_SERVER=8.8.8.8
 ### Main Endpoints
 
 #### Combined Data
-- `GET /api/sites-combined` - Get all sites with clusters from VLAN Manager + manual
+- `GET /api/sites-combined` - Get all sites with clusters from Segments Manager + manual
 
 #### Cluster Management
 - `POST /api/clusters` - Create a manual cluster (Admin)
@@ -112,10 +115,10 @@ export DNS_SERVER=8.8.8.8
 - `GET /api/export/csv` - Export clusters as CSV
 - `GET /api/export/excel` - Export clusters as Excel
 
-#### VLAN Sync
+#### Segments Manager Sync
 
-- `GET /api/vlan-sync/status` - Get sync status
-- `POST /api/vlan-sync/sync` - Trigger manual sync (Admin)
+- `GET /api/segments-sync/status` - Get sync status
+- `POST /api/segments-sync/sync` - Trigger manual sync (Admin)
 
 #### DNS Resolution
 
@@ -128,9 +131,10 @@ export DNS_SERVER=8.8.8.8
 
 ## 🎨 Features
 
-### VLAN Manager Integration
+### Segments Manager Integration
 - Automatic synchronization every 5 minutes
 - Read-only access (GET requests only)
+- Only syncs configured segment types (default: HC, MCE)
 - Caches data locally for offline access
 - Manual sync trigger available
 
@@ -200,9 +204,9 @@ src/
 - Input validation using Pydantic
 - CIDR and IPv4 validation
 - Cluster name pattern validation (`ocp4-*`)
-- VLAN Manager clusters protected from deletion
+- Segments Manager clusters protected from deletion
 - Non-root user in container
-- Read-only VLAN Manager access
+- Read-only Segments Manager access
 
 ## 📚 Documentation
 
@@ -257,7 +261,7 @@ podman pull docker.io/roi12345/openshift-cluster-navigator:v2
 cd helm/
 helm install cluster-navigator ./openshift-cluster-navigator \
   -f values-production.yaml \
-  --set config.vlanManager.url=http://your-vlan-manager:9000 \
+  --set app.segmentsManagerUrl=http://your-segments-manager:8000 \
   --set config.dns.server=your-dns-server
 ```
 

@@ -5,7 +5,7 @@ Handles data merging, transformation, and orchestration between data sources.
 from typing import List, Dict
 from datetime import datetime
 from src.database import cluster_store
-from src.services import vlan_sync_service
+from src.services import segments_manager_sync_service
 from src.config import config
 from src.utils import ClusterUtils
 import logging
@@ -18,22 +18,22 @@ class ClusterService:
 
     def __init__(self):
         self.cluster_store = cluster_store
-        self.vlan_service = vlan_sync_service
+        self.segments_manager_service = segments_manager_sync_service
 
     def get_combined_sites(self) -> List[Dict]:
         """
-        Get all sites with clusters from both VLAN Manager and manual entries.
+        Get all sites with clusters from both Segments Manager and manual entries.
 
         Business logic:
-        - VLAN Manager data takes precedence for duplicate clusters
-        - Manual clusters are added only if they don't exist in VLAN Manager
+        - Segments Manager data takes precedence for duplicate clusters
+        - Manual clusters are added only if they don't exist in Segments Manager
         - Clusters are grouped by site
 
         Returns:
             List of site dictionaries with clusters
         """
-        # Get VLAN Manager synced data
-        vlan_data = self.vlan_service.load_from_cache()
+        # Get Segments Manager synced data
+        segments_manager_data = self.segments_manager_service.load_from_cache()
 
         # Get manual clusters from in-memory store
         manual_clusters = self.cluster_store.get_all_clusters()
@@ -41,10 +41,10 @@ class ClusterService:
         # Prepare combined data structure
         sites_dict = {}
 
-        # Add VLAN Manager clusters first (they take precedence)
-        if vlan_data:
-            vlan_clusters = self._process_vlan_clusters(vlan_data.get("clusters", []))
-            for cluster in vlan_clusters:
+        # Add Segments Manager clusters first (they take precedence)
+        if segments_manager_data:
+            segments_manager_clusters = self._process_segments_manager_clusters(segments_manager_data.get("clusters", []))
+            for cluster in segments_manager_clusters:
                 site_name = cluster["site"]
 
                 if site_name not in sites_dict:
@@ -57,11 +57,11 @@ class ClusterService:
                 sites_dict[site_name]["clusters"].append(cluster)
                 sites_dict[site_name]["clusterCount"] += 1
 
-        # Add manual clusters (skip duplicates from VLAN Manager)
-        vlan_cluster_keys = self._get_vlan_cluster_keys(vlan_data)
+        # Add manual clusters (skip duplicates from Segments Manager)
+        segments_manager_cluster_keys = self._get_segments_manager_cluster_keys(segments_manager_data)
         manual_clusters_processed = self._process_manual_clusters(
             manual_clusters,
-            vlan_cluster_keys
+            segments_manager_cluster_keys
         )
 
         for cluster in manual_clusters_processed:
@@ -83,23 +83,23 @@ class ClusterService:
 
         return sites_list
 
-    def _process_vlan_clusters(self, vlan_clusters: List[Dict]) -> List[Dict]:
+    def _process_segments_manager_clusters(self, segments_manager_clusters: List[Dict]) -> List[Dict]:
         """
-        Transform VLAN Manager clusters to API response format.
+        Transform Segments Manager clusters to API response format.
 
         Args:
-            vlan_clusters: Raw clusters from VLAN Manager cache
+            segments_manager_clusters: Raw clusters from Segments Manager cache
 
         Returns:
             List of processed cluster dictionaries
         """
         processed = []
 
-        for cluster in vlan_clusters:
+        for cluster in segments_manager_clusters:
             domain_name = cluster.get("domainName", config.default_domain)
 
             cluster_entry = {
-                "id": f"vlan-{cluster['clusterName']}@{cluster['site']}",
+                "id": f"segments-{cluster['clusterName']}@{cluster['site']}",
                 "clusterName": cluster["clusterName"],
                 "site": cluster["site"],
                 "segments": cluster["segments"],
@@ -109,11 +109,8 @@ class ClusterService:
                     domain_name
                 ),
                 "createdAt": datetime.utcnow().isoformat(),
-                "source": "vlan-manager",
-                "loadBalancerIP": ClusterUtils.resolve_loadbalancer_ip(
-                    cluster['clusterName'],
-                    domain_name
-                ),
+                "source": "segments-manager",
+                "loadBalancerIP": cluster.get("loadBalancerIP"),
                 "metadata": cluster.get("metadata", {})
             }
 
@@ -124,27 +121,27 @@ class ClusterService:
     def _process_manual_clusters(
         self,
         manual_clusters: List[Dict],
-        vlan_cluster_keys: set
+        segments_manager_cluster_keys: set
     ) -> List[Dict]:
         """
-        Process manual clusters, filtering out duplicates from VLAN Manager.
+        Process manual clusters, filtering out duplicates from Segments Manager.
 
         Args:
             manual_clusters: Manual clusters from cluster store
-            vlan_cluster_keys: Set of (clusterName, site) tuples from VLAN Manager
+            segments_manager_cluster_keys: Set of (clusterName, site) tuples from Segments Manager
 
         Returns:
-            List of manual clusters not in VLAN Manager
+            List of manual clusters not in Segments Manager
         """
         processed = []
 
         for cluster in manual_clusters:
-            # Skip if this cluster already exists from VLAN Manager
+            # Skip if this cluster already exists from Segments Manager
             cluster_key = (cluster["clusterName"], cluster["site"])
-            if cluster_key in vlan_cluster_keys:
+            if cluster_key in segments_manager_cluster_keys:
                 logger.debug(
                     f"Skipping manual cluster {cluster['clusterName']}@{cluster['site']} "
-                    f"(exists in VLAN Manager)"
+                    f"(exists in Segments Manager)"
                 )
                 continue
 
@@ -163,20 +160,20 @@ class ClusterService:
 
         return processed
 
-    def _get_vlan_cluster_keys(self, vlan_data: Dict) -> set:
+    def _get_segments_manager_cluster_keys(self, segments_manager_data: Dict) -> set:
         """
-        Extract unique cluster keys from VLAN Manager data.
+        Extract unique cluster keys from Segments Manager data.
 
         Args:
-            vlan_data: VLAN Manager cache data
+            segments_manager_data: Segments Manager cache data
 
         Returns:
             Set of (clusterName, site) tuples
         """
-        if not vlan_data:
+        if not segments_manager_data:
             return set()
 
-        clusters = vlan_data.get("clusters", [])
+        clusters = segments_manager_data.get("clusters", [])
         return {(c["clusterName"], c["site"]) for c in clusters}
 
     def get_all_manual_clusters(self) -> List[Dict]:

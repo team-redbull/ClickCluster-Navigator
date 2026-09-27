@@ -29,7 +29,7 @@ The code has been updated with:
 ## Updated Files
 
 Two cache files are used:
-1. `/app/data/vlan_cache.json` - VLAN Manager sync data
+1. `/app/data/segments_manager_cache.json` - Segments Manager sync data
 2. `/app/data/manual_clusters.json` - Manually created clusters
 
 Both files now use file locking to prevent race conditions across replicas.
@@ -125,16 +125,16 @@ Pod 1, 2, 3: Load clusters on startup
 All pods have consistent data
 ```
 
-### VLAN Manager Sync
+### Segments Manager Sync
 
-Only **one pod** should actively sync from VLAN Manager (typically the leader). However, all pods can safely read the cache:
+Only **one pod** should actively sync from Segments Manager (typically the leader). However, all pods can safely read the cache:
 
 ```
 Pod 1 (Leader): Syncs every 5 minutes
   ↓
-1. Fetch data from VLAN Manager API
+1. Fetch data from Segments Manager API
 2. Acquire EXCLUSIVE lock
-3. Write to vlan_cache.tmp
+3. Write to segments_manager_cache.tmp
 4. Atomic rename
   ↓
 Pod 2 & 3: Read from cache when serving requests

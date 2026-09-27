@@ -1,6 +1,6 @@
 """
-VLAN cache service.
-Handles caching of VLAN Manager data to local storage.
+Segments Manager cache service.
+Handles caching of Segments Manager data to local storage.
 """
 from pathlib import Path
 from datetime import datetime
@@ -11,8 +11,8 @@ from src.utils.file_operations import FileOperations
 logger = logging.getLogger(__name__)
 
 
-class VLANCacheService:
-    """Service for managing VLAN Manager data cache."""
+class SegmentsManagerCacheService:
+    """Service for managing Segments Manager data cache."""
 
     def __init__(self, cache_file: Path):
         """

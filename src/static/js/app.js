@@ -164,7 +164,7 @@ async function hardRefresh() {
     btn.textContent = 'Syncing...';
 
     try {
-        const response = await fetch(`${API_BASE_URL}/vlan-sync/sync`, {
+        const response = await fetch(`${API_BASE_URL}/segments-sync/sync`, {
             method: 'POST',
             headers: {
                 'Authorization': `Basic ${adminCredentials}`
@@ -187,14 +187,14 @@ async function hardRefresh() {
         showRefreshStatus(`Sync error: ${error.message}`, 'error');
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg> Hard Refresh from VLAN Manager';
+        btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/></svg> Hard Refresh from Segments Manager';
     }
 }
 
 // Load sync status
 async function loadSyncStatus() {
     try {
-        const response = await fetch(`${API_BASE_URL}/vlan-sync/status`);
+        const response = await fetch(`${API_BASE_URL}/segments-sync/status`);
         if (response.ok) {
             const status = await response.json();
             const lastSyncElement = document.getElementById('lastSyncTime');
@@ -236,7 +236,7 @@ async function loadSyncStatus() {
             }
 
             if (statsElement && status.cache_age_minutes !== null) {
-                const dataResponse = await fetch(`${API_BASE_URL}/vlan-sync/data`);
+                const dataResponse = await fetch(`${API_BASE_URL}/segments-sync/data`);
                 if (dataResponse.ok) {
                     const data = await dataResponse.json();
                     statsElement.textContent = `${data.stats.total_clusters} clusters, ${data.stats.total_sites} sites, ${data.stats.total_segments} segments (Cache age: ${status.cache_age_minutes.toFixed(1)} min)`;
@@ -467,8 +467,8 @@ function createClusterCard(cluster) {
     const card = document.createElement('div');
     card.className = 'cluster-card';
 
-    const sourceIndicator = cluster.source === 'vlan-manager' ?
-        '<span class="source-badge vlan">VLAN Manager</span>' :
+    const sourceIndicator = cluster.source === 'segments-manager' ?
+        '<span class="source-badge segments-manager">Segments Manager</span>' :
         '<span class="source-badge manual">Manual</span>';
 
     // Add delete button for manual clusters if admin is logged in
@@ -608,14 +608,14 @@ async function loadSitesDropdown() {
     const siteSelect = document.getElementById('newClusterSite');
 
     try {
-        const response = await fetch(`${API_BASE_URL}/vlan-sync/sites`);
+        const response = await fetch(`${API_BASE_URL}/segments-sync/sites`);
         if (response.ok) {
             const data = await response.json();
 
             // Clear existing options except the first one
             siteSelect.innerHTML = '<option value="">Select a site...</option>';
 
-            // Add sites from VLAN Manager
+            // Add sites from Segments Manager
             if (data.sites && data.sites.length > 0) {
                 data.sites.forEach(site => {
                     const option = document.createElement('option');
@@ -769,7 +769,7 @@ async function deleteCluster(clusterId, clusterName, event) {
             loadClusters();
         } else if (response.status === 403) {
             const error = await response.json();
-            alert(error.detail || 'Cannot delete VLAN Manager clusters');
+            alert(error.detail || 'Cannot delete Segments Manager clusters');
         } else if (response.status === 404) {
             alert('Cluster not found');
         } else {

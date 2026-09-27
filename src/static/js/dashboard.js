@@ -124,7 +124,7 @@ function renderSourceDistributionChart(data) {
     dashboardCharts.sourceDistribution = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: Object.keys(data).map(k => k === 'vlan-manager' ? 'VLAN Manager' : 'Manual'),
+            labels: Object.keys(data).map(k => k === 'segments-manager' ? 'Segments Manager' : 'Manual'),
             datasets: [{
                 data: Object.values(data),
                 backgroundColor: [
@@ -169,11 +169,11 @@ function renderDomainDistributionChart(data) {
             datasets: [{
                 data: values,
                 backgroundColor: [
-                    'rgba(238, 0, 0, 0.7)',
-                    'rgba(238, 0, 0, 0.5)',
-                    'rgba(238, 0, 0, 0.3)',
-                    'rgba(201, 25, 11, 0.7)',
-                    'rgba(201, 25, 11, 0.5)'
+                    'rgba(238, 0, 0, 0.85)',
+                    'rgba(30, 30, 30, 0.85)',
+                    'rgba(240, 171, 0, 0.85)',
+                    'rgba(153, 0, 0, 0.85)',
+                    'rgba(150, 150, 150, 0.85)'
                 ],
                 borderColor: 'rgba(255, 255, 255, 1)',
                 borderWidth: 2
@@ -431,7 +431,7 @@ function renderRecentActivity(sites) {
         const activityDiv = document.createElement('div');
         activityDiv.className = 'activity-item';
 
-        const icon = cluster.source === 'vlan-manager' ?
+        const icon = cluster.source === 'segments-manager' ?
             '<svg class="activity-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' :
             '<svg class="activity-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>';
 

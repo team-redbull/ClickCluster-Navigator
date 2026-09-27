@@ -1,14 +1,17 @@
 /* OpenShift Cluster Navigator - Enhanced Styles */
 
 :root {
-    /* OpenShift Light Theme - Black, White, Red */
+    /* Light theme — Red Bull black/red brand identity, kept from the original
+       theme. Radius scale, transition timing and shadow sizing are the
+       refined values introduced in the redesign pass (rounder corners,
+       softer shadows, calmer motion) — only the hue changed back to red/black. */
     --primary-color: #ee0000;
     --primary-hover: #cc0000;
     --primary-light: #ff3333;
     --secondary-color: #000000;
-    --success-color: #3e8635;
-    --danger-color: #c9190b;
-    --warning-color: #f0ab00;
+    --success-color: #16a34a;
+    --danger-color: #dc2626;
+    --warning-color: #d97706;
     --info-color: #2b9af3;
     --background: #f5f5f5;
     --background-secondary: #e7e7e7;
@@ -17,25 +20,26 @@
     --text-secondary: #6a6e73;
     --border-color: #d2d2d2;
     --header-bg: linear-gradient(135deg, #000000 0%, #2b2b2b 100%);
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
-    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-    --shadow-hover: 0 4px 16px rgba(238, 0, 0, 0.2);
-    --border-radius: 8px;
-    --border-radius-sm: 4px;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.16);
+    --shadow-hover: 0 6px 18px rgba(238, 0, 0, 0.18);
+    --border-radius: 12px;
+    --border-radius-sm: 8px;
+    --border-radius-md: 10px;
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Dark Mode */
+/* Dark Mode — Red Bull black/red brand identity. */
 body.dark-mode {
     --primary-color: #ee0000;
     --primary-hover: #ff3333;
     --primary-light: #ff4444;
     --secondary-color: #ffffff;
-    --success-color: #5ba352;
-    --danger-color: #ff4444;
-    --warning-color: #f0ab00;
+    --success-color: #4ade80;
+    --danger-color: #f87171;
+    --warning-color: #fbbf24;
     --info-color: #4dabf7;
     --background: #0f0f0f;
     --background-secondary: #1a1a1a;
@@ -44,10 +48,10 @@ body.dark-mode {
     --text-secondary: #b8b8b8;
     --border-color: #2b2b2b;
     --header-bg: linear-gradient(135deg, #ee0000 0%, #990000 100%);
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.7);
-    --shadow-hover: 0 4px 16px rgba(238, 0, 0, 0.5);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+    --shadow-hover: 0 6px 18px rgba(238, 0, 0, 0.3);
 }
 
 * {
@@ -291,30 +295,6 @@ header .subtitle {
     overflow: hidden;
 }
 
-.btn-primary::before,
-.btn-secondary::before,
-.btn-logout::before,
-.btn-refresh::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.btn-primary:hover::before,
-.btn-secondary:hover::before,
-.btn-logout:hover::before,
-.btn-refresh:hover::before {
-    width: 300px;
-    height: 300px;
-}
-
 .btn-primary {
     background: var(--primary-color);
     color: white;
@@ -323,12 +303,7 @@ header .subtitle {
 
 .btn-primary:hover {
     background: var(--primary-hover);
-    transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(238, 0, 0, 0.4);
-}
-
-.btn-primary:active {
-    transform: translateY(0);
 }
 
 .btn-primary:disabled {
@@ -347,7 +322,6 @@ header .subtitle {
 .btn-secondary:hover {
     background: var(--background-secondary);
     border-color: var(--text-secondary);
-    transform: translateY(-2px);
 }
 
 .btn-logout {
@@ -357,8 +331,7 @@ header .subtitle {
 }
 
 .btn-logout:hover {
-    background: #a30000;
-    transform: translateY(-2px);
+    background: #b91c1c;
     box-shadow: 0 4px 12px rgba(201, 25, 11, 0.4);
 }
 
@@ -369,8 +342,7 @@ header .subtitle {
 }
 
 .btn-refresh:hover {
-    background: #2d6327;
-    transform: translateY(-2px);
+    background: #15803d;
     box-shadow: 0 4px 12px rgba(62, 134, 53, 0.4);
 }
 
@@ -523,14 +495,15 @@ header .subtitle {
 }
 
 .stat-badge {
-    padding: 8px 16px;
-    background: var(--primary-color);
-    color: white;
-    border-radius: 20px;
-    font-size: 0.9em;
+    padding: 6px 14px;
+    background: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    border-radius: 999px;
+    font-size: 0.85em;
     font-weight: 600;
     white-space: nowrap;
-    box-shadow: var(--shadow-sm);
+    font-family: 'Courier New', monospace;
 }
 
 /* Loading Spinner - Enhanced */
@@ -611,37 +584,19 @@ header .subtitle {
 
 .cluster-card {
     background: var(--card-background);
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: 24px;
     transition: var(--transition);
     position: relative;
-    overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;
 }
 
-.cluster-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    background: var(--primary-color);
-    transform: scaleY(0);
-    transition: var(--transition);
-}
-
 .cluster-card:hover {
     border-color: var(--primary-color);
     box-shadow: var(--shadow-hover);
-    transform: translateY(-4px);
-}
-
-.cluster-card:hover::before {
-    transform: scaleY(1);
 }
 
 .cluster-header {
@@ -676,7 +631,7 @@ header .subtitle {
     letter-spacing: 0.5px;
 }
 
-.source-badge.vlan {
+.source-badge.segments-manager {
     background: rgba(62, 134, 53, 0.15);
     color: var(--success-color);
     border: 1px solid var(--success-color);
@@ -756,13 +711,6 @@ header .subtitle {
     background: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(238, 0, 0, 0.3);
-}
-
-.ip-address-badge:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 4px rgba(238, 0, 0, 0.2);
 }
 
 
@@ -994,7 +942,7 @@ footer {
 .btn-secondary:focus,
 .btn-logout:focus,
 .btn-refresh:focus {
-    outline: 3px solid var(--primary-color);
+    outline: 2px solid var(--primary-color);
     outline-offset: 2px;
 }
 
@@ -1048,7 +996,7 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
 
 .toast {
     background: var(--card-background);
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: 12px 16px;
     box-shadow: var(--shadow-lg);
@@ -1056,15 +1004,15 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
     align-items: center;
     gap: 10px;
     opacity: 0;
-    transform: translateX(400px) scale(0.9);
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(-8px);
+    transition: var(--transition);
     pointer-events: auto;
     backdrop-filter: blur(10px);
 }
 
 .toast.show {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translateY(0);
 }
 
 .toast svg {
@@ -1242,13 +1190,6 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-color);
     color: white;
     border-color: var(--primary-color);
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(238, 0, 0, 0.3);
-}
-
-.segment-badge:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 4px rgba(238, 0, 0, 0.2);
 }
 
 /* Enhanced Cluster Name - Click to copy */
@@ -1264,13 +1205,11 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
 
 .cluster-header h4:hover {
     color: var(--primary-color);
-    background: rgba(238, 0, 0, 0.05);
-    transform: translateX(4px);
+    background: rgba(238, 0, 0, 0.08);
 }
 
 .cluster-header h4:active {
-    transform: translateX(2px);
-    background: rgba(238, 0, 0, 0.1);
+    background: rgba(238, 0, 0, 0.14);
 }
 
 /* Active Filters */
@@ -1475,14 +1414,13 @@ body.dark-mode .header-logo:hover {
     background: var(--background);
     padding: 24px;
     border-radius: var(--border-radius);
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
     text-align: center;
     transition: var(--transition);
 }
 
 .stat-card:hover {
     border-color: var(--primary-color);
-    transform: translateY(-4px);
     box-shadow: var(--shadow-hover);
 }
 
@@ -1661,7 +1599,6 @@ body.dark-mode .header-logo:hover {
 }
 
 .create-cluster-form .btn-primary:hover {
-    transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(238, 0, 0, 0.4);
 }
 
@@ -1732,6 +1669,6 @@ body.dark-mode .header-logo:hover {
     flex-shrink: 0;
     margin-right: 6px;
 }
-.availability-dot.green { background: #22c55e; box-shadow: 0 0 4px rgba(34,197,94,0.5); }
-.availability-dot.red   { background: #ef4444; box-shadow: 0 0 4px rgba(239,68,68,0.5); }
+.availability-dot.green { background: var(--success-color); box-shadow: 0 0 4px color-mix(in srgb, var(--success-color) 50%, transparent); }
+.availability-dot.red   { background: var(--danger-color); box-shadow: 0 0 4px color-mix(in srgb, var(--danger-color) 50%, transparent); }
 .availability-dot.grey  { background: #9ca3af; }
